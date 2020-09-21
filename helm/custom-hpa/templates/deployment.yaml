@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName}}-custom-hpa
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.appName}}-custom-hpa
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: {{ .Values.prometheus.path }}
+        prometheus.io/port: {{ .Values.prometheus.port }}
+      labels:
+        app: {{ .Values.appName }}-custom-hpa
+    spec:
+      containers:
+        - name: {{ .Values.appName }}-custom-hpa
+          image: nanit/kubernetes-custom-hpa-{{ .Values.version }}
+          env:
+            - name: LOG_LEVEL
+              value: {{ .Values.logLevel }}
+            - name: PORT
+              value: {{ .Values.port }}
+            - name: CONTROL_LOOP_PERIOD
+              value: {{ .Values.controlLoopPeriod }}
+            - name: DEPLOYMENT
+              value: {{ .Values.target.deployment }}
+            - name: NAMESPACE
+              value: {{ .Values.target.namespace }}
+            - name: TARGET_VALUE
+              value: "{{ .Values.target.value }}"
+            - name: MIN_REPLICAS
+              value: "{{ .Values.minReplicas }}"
+            - name: MAX_REPLICAS
+              value: "{{ .Values.maxReplicas }}"
+            - name: SCALE_UP_COOLDOWN
+              value: "{{ .Values.behavior.scaleUpCooldown }}"
+            - name: SCALE_DOWN_COOLDOWN
+              value: "{{ .Values.behavior.scaleDownCooldown }}"
+            - name: SCALE_UP_MIN_FACTOR
+              value: "{{ .Values.behavior.scaleUpMinFactor }}"
+            - name: SCALE_UP_MAX_FACTOR
+              value: "{{ .Values.behavior.scaleUpMaxFactor }}"
+            - name: SCALE_DOWN_MIN_FACTOR
+              value: "{{ .Values.behavior.scaleDownMinFactor }}"
+            - name: SCALE_DOWN_MAX_FACTOR
+              value: "{{ .Values.behavior.scaleDownMaxFactor }}"
