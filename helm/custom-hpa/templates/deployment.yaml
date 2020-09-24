@@ -1,11 +1,13 @@
+{{- $appName := printf "%s-custom-hpa" .Values.target.deployment -}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.appName}}-custom-hpa
+  name: {{ $appName }}
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.appName}}-custom-hpa
+      app: {{ $appName }}
   replicas: 1
   template:
     metadata:
@@ -14,10 +16,10 @@ spec:
         prometheus.io/path: {{ .Values.prometheus.path }}
         prometheus.io/port: {{ .Values.prometheus.port }}
       labels:
-        app: {{ .Values.appName }}-custom-hpa
+        app: {{ $appName }}
     spec:
       containers:
-        - name: {{ .Values.appName }}-custom-hpa
+        - name: {{ $appName }}
           image: nanit/kubernetes-custom-hpa-{{ .Values.version }}
           env:
             - name: LOG_LEVEL
@@ -49,4 +51,4 @@ spec:
             - name: SCALE_DOWN_MAX_FACTOR
               value: "{{ .Values.behavior.scaleDownMaxFactor }}"
             - name: DRY_RUN
-              value: "{{ .Values.dryRun }}
+              value: "{{ .Values.dryRun }}"

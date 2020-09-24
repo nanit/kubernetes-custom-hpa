@@ -11,10 +11,11 @@ port: 3000
 dryRun: false
 
 controlLoopPeriod: 15
+
 behavior:
   scaleUpCooldown: 15
   scaleDownCooldown: 15
   scaleUpMinFactor: 0.1
   scaleUpMaxFactor: 1.0
   scaleDownMinFactor: 0.1
-  scaleDownMaxFactor:  1.0
+  scaleDownMaxFactor: 1.0

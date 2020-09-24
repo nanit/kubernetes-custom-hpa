@@ -1,0 +1,7 @@
+target:
+  deployment: dep
+  namespace: ns
+  value: 100
+
+minReplicas: 1
+maxReplicas: 10
