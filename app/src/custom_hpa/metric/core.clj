@@ -5,7 +5,12 @@
             [custom-hpa.metric.protocol.prometheus :refer [->Prometheus]]
             [custom-hpa.metric.protocol.provider :as provider]))
 
-(def ^:private provider-impl (->Prometheus))
+(defn default-provider []
+  (let [prometheus-url (System/getenv "PROMETHEUS_URL")
+        prometheus-port (System/getenv "PROMETHEUS_PORT")
+        prometheus-host (format "%s:%s/api/v1/query" prometheus-url prometheus-port)
+        prometheus-query (System/getenv "PROMETHEUS_QUERY")]
+    (->Prometheus prometheus-host prometheus-query)))
 
 (defn- report [sample]
   (if sample
@@ -14,8 +19,8 @@
       (prometheus/set (registry :custom-hpa/metric-requests) sample))
     (prometheus/inc (registry :custom-hpa/metric-requests {:status "failure"}))))
 
-(defn fetch []
-  (let [sample (provider/fetch provider-impl)]
+(defn fetch [provider]
+  (let [sample (provider/fetch provider)]
     (logger/debug "Fetched metric sample:" sample)
     (report sample)
     sample))

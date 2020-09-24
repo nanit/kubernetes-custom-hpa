@@ -5,7 +5,7 @@
 
 (def ^:dynamic metric-samples nil)
 
-(defn- pop-sample []
+(defn- pop-sample [_]
   (let [sample (first @metric-samples)]
     (swap! metric-samples rest)
     sample))

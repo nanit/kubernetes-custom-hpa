@@ -6,11 +6,10 @@
            [io.kubernetes.client.openapi.apis AppsV1Api]
            [io.kubernetes.client.custom V1Patch]))
 
-(def ^:private deployment (delay (System/getenv "DEPLOYMENT")))
-(def ^:private deployment-namespace (delay (System/getenv "NAMESPACE")))
-(def ^:private dry-run (delay (when (= "true " (System/getenv "DRY_RUN")) "All")))
-
 (def ^:private api (atom nil))
+(def ^:private deployment (atom nil))
+(def ^:private deployment-namespace (atom nil))
+(def ^:private dry-run (atom nil))
 
 (defn- generate-patch
   "Generates a V1Patch object to use for PATCH the deployment"
@@ -19,8 +18,11 @@
 
 (defn init
   "Initializes a kubernetes client for apps/v1 API group"
-  []
+  [dep namespace dry-run?]
   (logger/debug "Initializing k8s client")
+  (reset! deployment dep)
+  (reset! deployment-namespace namespace)
+  (reset! dry-run dry-run?)
   (let [client (.build (ClientBuilder/cluster))]
     (Configuration/setDefaultApiClient client)
     (reset! api (AppsV1Api.))))

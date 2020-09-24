@@ -6,10 +6,10 @@
             [custom-hpa.control-loop.executor :as executor]
             [custom-hpa.control-loop.status :as status]))
 
-(defn run []
+(defn run [metric-provider]
   (logger/debug "Control loop period started")
   (status/init)
-  (when-let [metric-sample (metric/fetch)]
+  (when-let [metric-sample (metric/fetch metric-provider)]
     (let [target-factor (factor/calculate metric-sample)]
       (when (reconciler/scale-allowed? target-factor)
         (executor/scale target-factor))))

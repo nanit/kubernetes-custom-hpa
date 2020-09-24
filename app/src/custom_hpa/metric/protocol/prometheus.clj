@@ -3,13 +3,6 @@
             [org.httpkit.client :as http]
             [clojure.data.json :as json]))
 
-(def ^:private url (delay (System/getenv "PROMETHEUS_URL")))
-(def ^:private port (delay (System/getenv "PROMETHEUS_PORT")))
-(def ^:private query (delay (System/getenv "PROMETHEUS_QUERY")))
-
-(def ^:private endpoint (delay (format "%s:%s/api/v1/query" url port)))
-(def ^:private opts (delay {:timeout 1000 :query-params {:query @query}}))
-
 (defn- parse-double [val] (Double/parseDouble val))
 
 (defn- parse-response [body]
@@ -27,10 +20,10 @@
        (nil? error)
        (= "success" (:status body))))
 
-(defrecord Prometheus []
+(defrecord Prometheus [host query]
   Provider
   (fetch [this]
-    (let [{:keys [status error body]} @(http/get @endpoint @opts)
+    (let [{:keys [status error body]} @(http/get host {:timeout 1000 :query-params {:query query}})
           parsed-body (when body (json/read-str :key-fn keyword))]
       (when (response-ok? status error parsed-body)
         (parse-response body)))))
