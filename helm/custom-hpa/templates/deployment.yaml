@@ -48,3 +48,5 @@ spec:
               value: "{{ .Values.behavior.scaleDownMinFactor }}"
             - name: SCALE_DOWN_MAX_FACTOR
               value: "{{ .Values.behavior.scaleDownMaxFactor }}"
+            - name: DRY_RUN
+              value: "{{ .Values.dryRun }}

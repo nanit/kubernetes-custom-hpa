@@ -5,6 +5,9 @@ IMAGE_NAME=nanit/$(APP_NAME):$(VERSION)
 dev:
 	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test repl
 
+package:
+	helm package helm/custom-hpa/
+
 ci:
 	@echo "Running tests..."
 	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && lein with-profile +test test

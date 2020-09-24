@@ -8,6 +8,8 @@ logLevel: info
 
 port: 3000
 
+dryRun: false
+
 controlLoopPeriod: 15
 behavior:
   scaleUpCooldown: 15
