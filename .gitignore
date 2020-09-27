@@ -10,3 +10,4 @@ app/.lein-*
 app/.nrepl-port
 app/.prepl-port
 *.iml
+helm/custom-hpa/pack

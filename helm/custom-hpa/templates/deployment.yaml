@@ -14,7 +14,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: {{ .Values.prometheus.path }}
-        prometheus.io/port: {{ .Values.prometheus.port }}
+        prometheus.io/port: "{{ .Values.prometheus.port }}"
       labels:
         app: {{ $appName }}
     spec:
