@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: {{ $appName }}
-          image: nanit/kubernetes-custom-hpa-{{ .Values.version }}
+          image: nanit/kubernetes-custom-hpa-{{ .Values.imageTag }}
           env:
             - name: LOG_LEVEL
               value: "{{ .Values.logLevel }}"
