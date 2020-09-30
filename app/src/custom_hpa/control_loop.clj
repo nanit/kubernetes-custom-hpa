@@ -17,4 +17,5 @@
       (catch Exception e
         (logger/error e "Exception was thrown during control loop period"))
       (finally
-        (<! (timeout @period-ms))))))
+        (<! (timeout @period-ms))))
+    (recur)))
