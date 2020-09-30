@@ -10,7 +10,8 @@ OWNER=nanit
 TOKEN=$(GITHUB_TOKEN)
 
 package:
-	helm package helm/custom-hpa/ -d $(CHART_PATH)/pack
+	mkdir -p $(CHART_PATH)/pack
+	helm package $(CHART_PATH) -d $(CHART_PATH)/pack
 
 upload:
 	docker run --rm \
@@ -37,6 +38,8 @@ index:
 ci:
 	@echo "Running tests..."
 	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test test
+	@echo "Validating helm chart"
+	helm lint $(CHART_PATH) -f $(CHART_PATH)/ci/values.yaml
 	@echo "Building Dockerfile"
 	sudo docker pull $(IMAGE_NAME) || sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME)
 
