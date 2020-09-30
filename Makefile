@@ -1,7 +1,8 @@
 APP_NAME=kubernetes-custom-hpa
 CHART_PATH=$(shell pwd)/helm/custom-hpa
 VERSION=$(shell cat $(CHART_PATH)/Chart.yaml | grep version | grep -o '[0-9\.]\+')
-IMAGE_NAME=nanit/$(APP_NAME):$(VERSION)
+APP_VERSION=$(shell cat $(CHART_PATH)/Chart.yaml | grep appVersion | grep -o 'v[0-9\.]\+')
+IMAGE_NAME=nanit/$(APP_NAME):$(APP_VERSION)
 CHART_PACKAGE_FILE=$(CHART_PATH)/custom-hpa-$(VERSION).tgz
 INDEX_PATH=$(shell pwd)/../helm-charts/
 RELEASER_IMAGE=quay.io/helmpack/chart-releaser:v1.0.0
