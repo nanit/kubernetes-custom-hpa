@@ -16,7 +16,7 @@
   (if sample
     (do
       (prometheus/inc (registry :custom-hpa/metric-requests {:status "success"}))
-      (prometheus/set (registry :custom-hpa/metric-requests) sample))
+      (prometheus/set (registry :custom-hpa/metric-samples) sample))
     (prometheus/inc (registry :custom-hpa/metric-requests {:status "failure"}))))
 
 (defn fetch [provider]
