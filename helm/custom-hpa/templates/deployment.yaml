@@ -53,7 +53,7 @@ spec:
             - name: DRY_RUN
               value: "{{ .Values.dryRun }}"
             - name: PROMETHEUS_URL
-              value: "{{ .Values.prometheus.url }}}"
+              value: "{{ .Values.prometheus.url }}"
             - name: PROMETHEUS_PORT
               value: "{{ .Values.prometheus.port }}"
             - name: PROMETHEUS_QUERY

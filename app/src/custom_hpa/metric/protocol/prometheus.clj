@@ -1,7 +1,8 @@
 (ns custom-hpa.metric.protocol.prometheus
   (:require [custom-hpa.metric.protocol.provider :refer [Provider]]
             [org.httpkit.client :as http]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [taoensso.timbre :as logger]))
 
 (defn- parse-double [val] (Double/parseDouble val))
 
@@ -24,6 +25,7 @@
   Provider
   (fetch [this]
     (let [{:keys [status error body]} @(http/get host {:timeout 1000 :query-params {:query query}})
-          parsed-body (when body (json/read-str :key-fn keyword))]
+          parsed-body (when body (json/read-str body :key-fn keyword))]
+      (logger/debug "Got" status "response from prometheus:" parsed-body)
       (when (response-ok? status error parsed-body)
         (parse-response body)))))
