@@ -57,4 +57,4 @@ spec:
             - name: PROMETHEUS_PORT
               value: "{{ .Values.prometheus.port }}"
             - name: PROMETHEUS_QUERY
-              value: "{{ .Values.prometheus.query }}"
+              value: {{ .Values.prometheus.query }}
