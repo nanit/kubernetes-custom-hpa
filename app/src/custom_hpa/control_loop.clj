@@ -9,7 +9,7 @@
 (def ^:private period-ms (delay (* 1000 (int-env "CONTROL_LOOP_PERIOD"))))
 
 (defn start [metric-provider]
-  (logger/info "Starting control loop every" period-ms "milliseconds")
+  (logger/info "Starting control loop every" @period-ms "milliseconds")
   (go-loop []
     (try
       (prometheus/inc (registry :custom-hpa/up))
