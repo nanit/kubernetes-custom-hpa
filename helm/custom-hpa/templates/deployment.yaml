@@ -23,15 +23,15 @@ spec:
           image: nanit/kubernetes-custom-hpa-{{ .Values.version }}
           env:
             - name: LOG_LEVEL
-              value: {{ .Values.logLevel }}
+              value: "{{ .Values.logLevel }}"
             - name: PORT
               value: "3000"
             - name: CONTROL_LOOP_PERIOD
               value: "{{ .Values.controlLoopPeriod }}"
             - name: DEPLOYMENT
-              value: {{ .Values.target.deployment }}
+              value: "{{ .Values.target.deployment }}"
             - name: NAMESPACE
-              value: {{ .Values.target.namespace }}
+              value: "{{ .Values.target.namespace }}"
             - name: TARGET_VALUE
               value: "{{ .Values.target.value }}"
             - name: MIN_REPLICAS
@@ -51,4 +51,4 @@ spec:
             - name: SCALE_DOWN_MAX_FACTOR
               value: "{{ .Values.behavior.scaleDownMaxFactor }}"
             - name: DRY_RUN
-              value: {{ .Values.dryRun }}
+              value: "{{ .Values.dryRun }}"
