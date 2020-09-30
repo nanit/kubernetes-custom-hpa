@@ -46,7 +46,7 @@ ci:
 	@echo "Validating helm chart"
 	helm lint $(CHART_PATH) -f $(CHART_PATH)/ci/values.yaml
 	@echo "Building Dockerfile"
-	sudo docker pull $(IMAGE_NAME) || sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME)
+	sudo docker pull $(IMAGE_NAME) || (sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME))
 
 release: ci cleanup package upload index
 	@echo "Updated index with new release. Do not forget to push updated index file."
