@@ -6,7 +6,7 @@
 
 (defn- parse-double [val] (Double/parseDouble val))
 
-(defn- parse-response [body]
+(defn- extract-sample [body]
   (-> body
       :data
       :result
@@ -28,4 +28,4 @@
           parsed-body (when body (json/read-str body :key-fn keyword))]
       (logger/debug "Got" status "response from prometheus:" parsed-body)
       (when (response-ok? status error parsed-body)
-        (parse-response body)))))
+        (extract-sample parsed-body)))))
