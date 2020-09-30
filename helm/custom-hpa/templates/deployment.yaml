@@ -52,3 +52,9 @@ spec:
               value: "{{ .Values.behavior.scaleDownMaxFactor }}"
             - name: DRY_RUN
               value: "{{ .Values.dryRun }}"
+            - name: PROMETHEUS_URL
+              value: "{{ .Values.prometheus.url }}}"
+            - name: PROMETHEUS_PORT
+              value: "{{ .Values.prometheus.port }}"
+            - name: PROMETHEUS_QUERY
+              value: "{{ .Values.prometheus.query }}"

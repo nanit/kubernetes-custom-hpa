@@ -5,3 +5,8 @@ target:
 
 minReplicas: 1
 maxReplicas: 10
+
+prometheus:
+  url: http://localhost
+  port: 9090
+  query: up
