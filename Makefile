@@ -10,12 +10,12 @@ OWNER=nanit
 TOKEN=$(GITHUB_TOKEN)
 
 package:
-	mkdir -p $(CHART_PATH)/pack
 	helm package $(CHART_PATH) -d $(CHART_PATH)/pack
 
 upload:
 	docker run --rm \
-        -v $(CHART_PATH)/pack:/charts $(RELEASER_IMAGE) cr upload \
+        -v $(CHART_PATH)/pack:/charts \
+        $(RELEASER_IMAGE) cr upload \
         -r $(GIT_REPO) \
         -o $(OWNER) \
         -p /charts \
@@ -35,6 +35,10 @@ index:
 		-t $(TOKEN)
 	@echo "Done updating index file"
 
+cleanup:
+	mkdir -p $(CHART_PATH)/pack
+	rm $(CHART_PATH)/pack/*
+
 ci:
 	@echo "Running tests..."
 	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test test
@@ -43,8 +47,9 @@ ci:
 	@echo "Building Dockerfile"
 	sudo docker pull $(IMAGE_NAME) || sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME)
 
-release: ci package upload index
+release: ci cleanup package upload index
 	@echo "Updated index with new release. Do not forget to push updated index file."
+
 
 dev:
 	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test repl
