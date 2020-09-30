@@ -27,7 +27,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: CONTROL_LOOP_PERIOD
-              value: {{ .Values.controlLoopPeriod }}
+              value: "{{ .Values.controlLoopPeriod }}"
             - name: DEPLOYMENT
               value: {{ .Values.target.deployment }}
             - name: NAMESPACE
@@ -51,4 +51,4 @@ spec:
             - name: SCALE_DOWN_MAX_FACTOR
               value: "{{ .Values.behavior.scaleDownMaxFactor }}"
             - name: DRY_RUN
-              value: "{{ .Values.dryRun }}"
+              value: {{ .Values.dryRun }}
