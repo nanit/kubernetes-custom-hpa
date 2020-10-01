@@ -1,4 +1,4 @@
-FROM clojure:lein-2.9.1
+FROM clojure:lein-2.9.3
 
 RUN mkdir -p /usr/src/app
 
