@@ -21,7 +21,7 @@
   (logger/debug "Initializing k8s client. Deployment =" dep ", Namespace =" namespace ", dry-run?=" dry-run?)
   (reset! deployment dep)
   (reset! deployment-namespace namespace)
-  (reset! dry-run dry-run?)
+  (reset! dry-run (when dry-run? "All"))
   (let [client (.build (doto (ClientBuilder/cluster)
                          (.setVerifyingSsl false)))]
     (reset! api (AppsV1Api. client))))

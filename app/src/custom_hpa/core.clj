@@ -13,7 +13,7 @@
   [& args]
   (let [deployment (System/getenv "DEPLOYMENT")
         deployment-namespace (System/getenv "NAMESPACE")
-        dry-run (when (= "true" (str/trim (System/getenv "DRY_RUN"))) "All")]
+        dry-run (= "true" (str/trim (System/getenv "DRY_RUN")))]
     (logger/info "Custom HPA started")
     (logger/set-level! (keyword (or (System/getenv "LOG_LEVEL") "info")))
     (logger/swap-config! assoc-in [:timestamp-opts :pattern] "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
