@@ -30,7 +30,6 @@ cleanup:
 	rm $(CHART_PATH)/pack/*
 
 release: ci cleanup package upload
-	@echo "Updated index with new release. Do not forget to push updated index file."
 
 lein-test:
 	@echo "Running tests..."
