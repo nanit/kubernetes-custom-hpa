@@ -2,7 +2,6 @@
   (:require [taoensso.timbre :as logger]
             [clojure.data.json :as json])
   (:import [io.kubernetes.client.util ClientBuilder]
-           [io.kubernetes.client.openapi Configuration]
            [io.kubernetes.client.openapi.apis AppsV1Api]
            [io.kubernetes.client.custom V1Patch]))
 
@@ -19,7 +18,7 @@
 (defn init
   "Initializes a kubernetes client for apps/v1 API group"
   [dep namespace dry-run?]
-  (logger/debug "Initializing k8s client")
+  (logger/debug "Initializing k8s client. Deployment =" dep ", Namespace =" namespace ", dry-run?=" dry-run?)
   (reset! deployment dep)
   (reset! deployment-namespace namespace)
   (reset! dry-run dry-run?)
