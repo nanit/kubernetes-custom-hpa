@@ -14,7 +14,7 @@
 
 (def ^:private metric-provider (metric/default-provider))
 
-(defn- scaled? [scale-type] (status/active-event? scale-type status/scaled))
+(defn- scaled? [scale-type] (status/notified? scale-type status/scaled))
 
 (defn- run-cooldown-test [scale-type]
   (testing (str "cooldown for scale" (name scale-type))
@@ -25,7 +25,7 @@
           (period/run metric-provider)
           (is (not (scaled? scale-type))))
         (testing "should report cooldown event"
-          (status/active-event? scale-type status/cooldown))
+          (status/notified? scale-type status/cooldown))
         (testing "last scale time should not change"
           (is (= now (status/last-scale-time scale-type))))))))
 
@@ -50,7 +50,7 @@
     (period/run metric-provider)
     (is (not (scaled? scale-up))))
   (testing "should report event"
-    (status/active-event? scale-up status/below-min-factor)))
+    (status/notified? scale-up status/below-min-factor)))
 
 (deftest scale-down-factor-below-minimum-test
   (metric.test-helper/seed-samples [(metric.test-helper/sample (* metric.test-helper/scale-down-min-sample 2) metric.test-helper/scale-up-min-sample)])
@@ -58,7 +58,7 @@
     (period/run metric-provider)
     (is (not (scaled? scale-down))))
   (testing "should report event"
-    (status/active-event? scale-down status/below-min-factor)))
+    (status/notified? scale-down status/below-min-factor)))
 
 (deftest scale-up-abort-current-pods-equal-max-replicas-test
   (testing "should not scale up when current pods = max replicas"
@@ -67,7 +67,7 @@
       (period/run metric-provider)
       (is (not (scaled? scale-up)))))
   (testing "should report event"
-    (status/active-event? scale-up status/limited)))
+    (status/notified? scale-up status/limited)))
 
 (deftest scale-down-abort-current-pods-equal-min-replicas-test
   (testing "should not scale down when current pods = max replicas"
@@ -76,7 +76,7 @@
       (period/run metric-provider)
       (is (not (scaled? scale-up)))))
   (testing "should report event"
-    (status/active-event? scale-down status/limited)))
+    (status/notified? scale-down status/limited)))
 
 (defn- calc-expected-pods
   [current-pods sample]

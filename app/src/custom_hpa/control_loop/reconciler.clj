@@ -19,7 +19,7 @@
           before? (time/before? (time/now) last-scale-time-extended)]
       (when before?
         (logger/info "Can't scale" (name scale-type) "because custom HPA is on cooldown")
-        (status/event scale-type status/cooldown))
+        (status/notify scale-type status/cooldown))
       before?)))
 
 (defn- lt-min-factor? [factor scale-type]
@@ -27,7 +27,7 @@
         lt? (min-factor-pred factor @min-factor)]
     (when lt?
       (logger/info "Can't scale" (name scale-type) "because scale factor" factor "is below minimum" @min-factor)
-      (status/event scale-type status/below-min-factor))
+      (status/notify scale-type status/below-min-factor))
     lt?))
 
 (defn scale-allowed?

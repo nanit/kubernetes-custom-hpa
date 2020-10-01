@@ -15,12 +15,12 @@
   (cond
     (and (scale-up? factor) (> factor @scale-up-max-factor))
     (do (logger/info "Scale up factor is too high, using max factor for scale up" @scale-up-max-factor)
-        (status/event scale-up status/above-max-factor)
+        (status/notify scale-up status/above-max-factor)
         @scale-up-max-factor)
 
     (and (scale-down? factor) (< factor @scale-down-max-factor))
     (do (logger/info "Scale down factor is too low, using min factor for scale down" @scale-down-max-factor)
-        (status/event scale-up status/above-max-factor)
+        (status/notify scale-up status/above-max-factor)
         @scale-down-max-factor)
 
     :default factor))

@@ -24,6 +24,8 @@
 
 (def ^:private active-events (atom #{}))
 
+(defn- event [scale-type status] {:scale (name scale-type) :status status})
+
 (defn last-scale-time
   [scale-type]
   (@last-scale-event-timestamp scale-type))
@@ -32,9 +34,9 @@
   [scale-type]
   (swap! last-scale-event-timestamp assoc scale-type (time/now)))
 
-(defn event
+(defn notify
   [scale-type status]
-  (swap! active-events conj {:scale (name scale-type) :status status}))
+  (swap! active-events conj (event scale-type status)))
 
 (defn report []
   (let [non-active-events (set/difference @all-events (map :status @active-events))]
@@ -45,4 +47,4 @@
 
 (defn clean [] (reset! last-scale-event-timestamp {scale-up nil scale-down nil}))
 
-(defn active-event? [scale-type event] (some #{{:scale scale-type :status event}} @active-events))
+(defn notified? [scale-type status] (some #{(event scale-type status)} @active-events))

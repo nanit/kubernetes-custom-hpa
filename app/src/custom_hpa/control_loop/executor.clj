@@ -31,7 +31,7 @@
   (let [desired-pods-count (calculate-desired-pods-count current-pods-count factor)]
     (kube/scale-deployment desired-pods-count)
     (logger/info "Scaled deployment to" desired-pods-count "pods")
-    (status/event (scale-type factor) status/scaled)))
+    (status/notify (scale-type factor) status/scaled)))
 
 (defn scale
   "Calculates desired number of pods and updates the deployment's spec replicas.
@@ -43,4 +43,4 @@
     (if (should-scale? factor current-pods-count)
       (scale* factor current-pods-count)
       (do (logger/error "Can't scale deployment. Current pods =" current-pods-count ", Max replicas =" @max-replicas ", Min replicas =" @min-replicas)
-          (status/event (scale-type factor) status/limited)))))
+          (status/notify (scale-type factor) status/limited)))))

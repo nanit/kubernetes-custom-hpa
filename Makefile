@@ -10,6 +10,9 @@ GIT_REPO=helm-charts
 OWNER=nanit
 TOKEN=$(GITHUB_TOKEN)
 
+dev:
+	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test repl
+
 package:
 	helm package $(CHART_PATH) -d $(CHART_PATH)/pack
 
@@ -40,17 +43,19 @@ cleanup:
 	mkdir -p $(CHART_PATH)/pack
 	rm $(CHART_PATH)/pack/*
 
-ci:
-	@echo "Running tests..."
-	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test test
-	@echo "Validating helm chart"
-	helm lint $(CHART_PATH) -f $(CHART_PATH)/ci/values.yaml
-	@echo "Building Dockerfile"
-	sudo docker pull $(IMAGE_NAME) || (sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME))
-
 release: ci cleanup package upload index
 	@echo "Updated index with new release. Do not forget to push updated index file."
 
+lein-test:
+	@echo "Running tests..."
+	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test test
 
-dev:
-	source ./envfile.dev && export $(shell cut -d= -f1 envfile.dev) && cd app && lein with-profile +test repl
+helm-test:
+	@echo "Validating helm chart"
+	helm lint $(CHART_PATH) -f $(CHART_PATH)/ci/values.yaml
+
+docker:
+	@echo "Building Dockerfile"
+	sudo docker pull $(IMAGE_NAME) || (sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME))
+
+ci: lein-test helm-test docker
