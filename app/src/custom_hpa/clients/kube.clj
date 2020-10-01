@@ -25,8 +25,7 @@
   (reset! dry-run dry-run?)
   (let [client (.build (doto (ClientBuilder/cluster)
                          (.setVerifyingSsl false)))]
-    (Configuration/setDefaultApiClient client)
-    (reset! api (AppsV1Api.))))
+    (reset! api (AppsV1Api. client))))
 
 (defn current-pods-count
   "Returns current deployment's number of pods"
