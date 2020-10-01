@@ -58,5 +58,3 @@ spec:
               value: "{{ .Values.prometheus.port }}"
             - name: PROMETHEUS_QUERY
               value: {{ .Values.prometheus.query }}
-            - name: JAVA_OPTS
-              value: "-Djdk.tls.client.protocols=TLSv1.2"
