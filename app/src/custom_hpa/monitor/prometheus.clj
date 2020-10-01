@@ -40,6 +40,6 @@
 
 (defn export []
   (export/text-format (-> registry*
-                          (prometheus/set :custom-hpa/spec-min-replicas @min-replicas)
-                          (prometheus/set :custom-hpa/spec-max-replicas @max-replicas)
-                          (prometheus/set :custom-hpa/spec-target-value @target-value))))
+                          (prometheus/set :custom-hpa/spec-min-replicas {:deployment @deployment} @min-replicas)
+                          (prometheus/set :custom-hpa/spec-max-replicas {:deployment @deployment} @max-replicas)
+                          (prometheus/set :custom-hpa/spec-target-value {:deployment @deployment} @target-value))))

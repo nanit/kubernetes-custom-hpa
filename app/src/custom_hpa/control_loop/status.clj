@@ -20,7 +20,7 @@
                                           {:scale scale-up :status event}
                                           {:scale scale-down :status event}))
                                   #{}
-                                  [cooldown below-min-factor above-max-factor limited scale-down])))
+                                  [cooldown below-min-factor above-max-factor limited])))
 
 (def ^:private active-events (atom #{}))
 
@@ -34,7 +34,7 @@
 
 (defn event
   [scale-type status]
-  (swap! active-events conj {:scale scale-type :status status}))
+  (swap! active-events conj {:scale (name scale-type) :status status}))
 
 (defn report []
   (let [non-active-events (set/difference @all-events (map :status @active-events))]
