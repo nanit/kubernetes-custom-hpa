@@ -4,7 +4,6 @@ VERSION=$(shell cat $(CHART_PATH)/Chart.yaml | grep version | grep -o '[0-9\.]\+
 APP_VERSION=$(shell cat $(CHART_PATH)/Chart.yaml | grep appVersion | grep -o 'v[0-9\.]\+')
 IMAGE_NAME=nanit/$(APP_NAME):$(APP_VERSION)
 CHART_PACKAGE_FILE=$(CHART_PATH)/custom-hpa-$(VERSION).tgz
-INDEX_PATH=$(shell pwd)/../helm-charts/
 RELEASER_IMAGE=quay.io/helmpack/chart-releaser:v1.0.0
 GIT_REPO=helm-charts
 OWNER=nanit
@@ -26,24 +25,11 @@ upload:
         -t $(TOKEN)
 	@echo "Done uploading release to $(OWNER)/$(GIT_REPO) github repo"
 
-index:
-	docker run --rm \
-		-v $(CHART_PATH)/pack:/charts \
-		-v $(INDEX_PATH):/index \
-		$(RELEASER_IMAGE) cr index \
-		-c https://github.com/$(OWNER)/$(GIT_REPO) \
-		-r $(GIT_REPO) \
-		-i /index \
-		-o $(OWNER) \
-		-p /charts \
-		-t $(TOKEN)
-	@echo "Done updating index file"
-
 cleanup:
 	mkdir -p $(CHART_PATH)/pack
 	rm $(CHART_PATH)/pack/*
 
-release: ci cleanup package upload index
+release: ci cleanup package upload
 	@echo "Updated index with new release. Do not forget to push updated index file."
 
 lein-test:
