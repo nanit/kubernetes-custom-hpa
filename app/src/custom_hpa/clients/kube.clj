@@ -23,7 +23,8 @@
   (reset! deployment dep)
   (reset! deployment-namespace namespace)
   (reset! dry-run dry-run?)
-  (let [client (.build (ClientBuilder/cluster))]
+  (let [client (.build (doto (ClientBuilder/cluster)
+                         (.setVerifyingSsl false)))]
     (Configuration/setDefaultApiClient client)
     (reset! api (AppsV1Api.))))
 
