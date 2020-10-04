@@ -67,7 +67,7 @@ The basic scale factor can be limited by `behavior.scaleUpMaxFactor` and `behavi
 
 ### Permit Scale
 
-The custom HPA uses 2 parameters to determine if permitted to scale: cooldown and minimum scale factor.
+The custom HPA uses 2 parameters to determine if it is permitted to scale: cooldown and minimum scale factor.
 
 Cooldown parameter indicates how many seconds the custom HPA needs to wait until it can perform the same scale event again.
 The parameters can be set using `behavior.scaleUpCooldown` and `behavior.scaleDownCooldown`.
