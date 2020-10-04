@@ -14,17 +14,17 @@
 (def ^:private last-scale-event-timestamp (atom {scale-up   nil
                                                  scale-down nil}))
 
+(defn- event [scale-type status] {:scale (name scale-type) :status status})
+
 (def ^:private all-events (atom (reduce
-                                  (fn [acc event]
+                                  (fn [acc status]
                                     (conj acc
-                                          {:scale scale-up :status event}
-                                          {:scale scale-down :status event}))
+                                          (event scale-up status)
+                                          (event scale-down status)))
                                   #{}
                                   [cooldown below-min-factor above-max-factor limited])))
 
 (def ^:private active-events (atom #{}))
-
-(defn- event [scale-type status] {:scale (name scale-type) :status status})
 
 (defn last-scale-time
   [scale-type]
@@ -39,7 +39,7 @@
   (swap! active-events conj (event scale-type status)))
 
 (defn report []
-  (let [non-active-events (set/difference @all-events (map :status @active-events))]
+  (let [non-active-events (set/difference @all-events @active-events)]
     (doseq [e @active-events] (prometheus/set (registry :custom-hpa/status e) 1))
     (doseq [e non-active-events] (prometheus/set (registry :custom-hpa/status e) 0))))
 
