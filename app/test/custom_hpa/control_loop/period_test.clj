@@ -14,7 +14,7 @@
 
 (def ^:private metric-provider (metric/default-provider))
 
-(defn- scaled? [scale-type] (status/notified? scale-type status/scaled))
+(defn- scaled? [scale-type] (status/notified? scale-type status/scale))
 
 (defn- run-cooldown-test [scale-type]
   (testing (str "cooldown for scale" (name scale-type))
