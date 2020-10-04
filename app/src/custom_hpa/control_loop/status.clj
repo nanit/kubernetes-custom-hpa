@@ -9,7 +9,7 @@
 (def below-min-factor "below-min-factor")
 (def above-max-factor "above-max-factor")
 (def limited "limited")
-(def scaled "scaled")
+(def scale "scaled")
 
 (def ^:private last-scale-event-timestamp (atom {scale-up   nil
                                                  scale-down nil}))

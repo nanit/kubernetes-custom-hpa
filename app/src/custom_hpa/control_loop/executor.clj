@@ -31,7 +31,7 @@
   (let [desired-pods-count (calculate-desired-pods-count current-pods-count factor)]
     (kube/scale-deployment desired-pods-count)
     (logger/info "Scaled deployment to" desired-pods-count "pods")
-    (status/notify (scale-type factor) status/scaled)))
+    (status/notify (scale-type factor) status/scale)))
 
 (defn scale
   "Calculates desired number of pods and updates the deployment's spec replicas.
