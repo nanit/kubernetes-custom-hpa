@@ -22,7 +22,7 @@
                                           (event scale-up status)
                                           (event scale-down status)))
                                   #{}
-                                  [cooldown below-min-factor above-max-factor limited])))
+                                  [cooldown below-min-factor above-max-factor limited scale])))
 
 (def ^:private active-events (atom #{}))
 
