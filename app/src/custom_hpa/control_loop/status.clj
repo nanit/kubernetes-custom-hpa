@@ -30,13 +30,14 @@
   [scale-type]
   (@last-scale-event-timestamp scale-type))
 
-(defn scaled
-  [scale-type]
-  (swap! last-scale-event-timestamp assoc scale-type (time/now)))
-
 (defn notify
   [scale-type status]
   (swap! active-events conj (event scale-type status)))
+
+(defn scaled
+  [scale-type]
+  (notify scale-type scale)
+  (swap! last-scale-event-timestamp assoc scale-type (time/now)))
 
 (defn report []
   (let [non-active-events (set/difference @all-events @active-events)]
