@@ -27,20 +27,20 @@
     (and (scale-up? factor) (> @max-replicas current-pods-count))
     (and (scale-down? factor) (< @min-replicas current-pods-count))))
 
-(defn- scale* [factor current-pods-count]
+(defn- scale* [deployment deployment-namespace factor current-pods-count]
   (let [desired-pods-count (calculate-desired-pods-count current-pods-count factor)]
-    (kube/scale-deployment desired-pods-count)
+    (kube/scale-deployment deployment deployment-namespace desired-pods-count)
     (logger/info "Scaled deployment to" desired-pods-count "pods")
     (status/notify (scale-type factor) status/scale)))
 
 (defn scale
   "Calculates desired number of pods and updates the deployment's spec replicas.
   The desired number of pods is calculated by multiplying `factor` and the current replicas from the deployment's status."
-  [factor]
-  (let [current-pods-count (kube/current-pods-count)]
+  [deployment deployment-namespace factor]
+  (let [current-pods-count (kube/current-pods-count deployment deployment-namespace)]
     (logger/debug "Current pods count is" current-pods-count)
     (prometheus/set (registry :custom-hpa/status-current-replicas) current-pods-count)
     (if (should-scale? factor current-pods-count)
-      (scale* factor current-pods-count)
+      (scale* deployment deployment-namespace factor current-pods-count)
       (do (logger/error "Can't scale deployment. Current pods =" current-pods-count ", Max replicas =" @max-replicas ", Min replicas =" @min-replicas)
           (status/notify (scale-type factor) status/limited)))))

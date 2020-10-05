@@ -6,9 +6,6 @@
            [io.kubernetes.client.custom V1Patch]))
 
 (def ^:private api (atom nil))
-(def ^:private deployment (atom nil))
-(def ^:private deployment-namespace (atom nil))
-(def ^:private dry-run (atom nil))
 
 (defn- generate-patch
   "Generates a V1Patch object to use for PATCH the deployment"
@@ -17,25 +14,25 @@
 
 (defn init
   "Initializes a kubernetes client for apps/v1 API group"
-  [dep namespace dry-run?]
-  (logger/debug "Initializing k8s client. Deployment =" dep ", Namespace =" namespace ", dry-run?=" dry-run?)
-  (reset! deployment dep)
-  (reset! deployment-namespace namespace)
-  (reset! dry-run (when dry-run? "All"))
+  []
+  (logger/debug "Initializing k8s client")
   (let [client (.build (doto (ClientBuilder/cluster)
                          (.setVerifyingSsl false)))]
     (reset! api (AppsV1Api. client))))
 
 (defn current-pods-count
   "Returns current deployment's number of pods"
-  []
-  (let [deployment (.readNamespacedDeployment @api @deployment @deployment-namespace nil nil nil)
+  [deployment deployment-namespace]
+  (let [deployment (.readNamespacedDeployment @api deployment deployment-namespace nil nil nil)
         deployment-status (.getStatus deployment)]
     (.getReplicas deployment-status)))
 
 (defn scale-deployment
-  "Updates the deployment's desired number of pods with `pods-count`"
-  [pods-count]
-  (let [patch (generate-patch pods-count)]
-    (logger/info "Going to scale deployment to" pods-count "pods")
-    (.patchNamespacedDeployment @api @deployment @deployment-namespace patch nil @dry-run nil nil)))
+  "Updates the deployment's desired number of pods with `desired-pods-count`."
+  ([deployment deployment-namespace desired-pods-count]
+   (scale-deployment deployment deployment-namespace desired-pods-count false))
+  ([deployment deployment-namespace desired-pods-count dry-run?]
+  (let [patch (generate-patch desired-pods-count)
+        dry-run (when dry-run? "All")]
+    (logger/info "Going to scale deployment to" desired-pods-count "pods")
+    (.patchNamespacedDeployment @api deployment deployment-namespace patch nil dry-run nil nil))))

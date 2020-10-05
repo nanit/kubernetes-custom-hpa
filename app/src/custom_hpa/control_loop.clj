@@ -4,16 +4,18 @@
             [iapetos.core :as prometheus]
             [custom-hpa.helpers.env :refer [int-env]]
             [custom-hpa.control-loop.period :as period]
-            [custom-hpa.monitor.prometheus :refer [registry]]))
+            [custom-hpa.monitor.prometheus :refer [registry]]
+            [custom-hpa.clients.kube :as kube]))
 
 (def ^:private period-ms (delay (* 1000 (int-env "CONTROL_LOOP_PERIOD"))))
 
-(defn start [metric-provider]
-  (logger/info "Starting control loop every" @period-ms "milliseconds")
+(defn start [deployment deployment-namespace metric-provider]
+  (logger/info "Starting control loop every" @period-ms "milliseconds, deployment =" deployment ", namespace = " deployment-namespace)
+  (kube/init)
   (go-loop []
     (try
       (prometheus/inc (registry :custom-hpa/up))
-      (period/run metric-provider)
+      (period/run deployment deployment-namespace metric-provider)
       (catch Exception e
         (logger/error e "Exception was thrown during control loop period"))
       (finally

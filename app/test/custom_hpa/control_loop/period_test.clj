@@ -12,6 +12,8 @@
 
 (use-fixtures :each kube-fixture metric-fixture status-fixture)
 
+(def ^:private deployment (System/getenv "DEPLOYMENT"))
+(def ^:private deployment-namespace (System/getenv "NAMESPACE"))
 (def ^:private metric-provider (metric/default-provider))
 
 (defn- scaled? [scale-type] (status/notified? scale-type status/scale))
@@ -22,7 +24,7 @@
       (with-redefs [time/now (constantly now)]
         (testing "should not scale when in cooldown"
           (status/scaled scale-type)
-          (period/run metric-provider)
+          (period/run deployment deployment-namespace metric-provider)
           (is (not (scaled? scale-type))))
         (testing "should report cooldown event"
           (status/notified? scale-type status/cooldown))
@@ -32,7 +34,7 @@
 (deftest no-metric-sample-test
   (testing "should not scale deployment when no metric fetched"
     (metric.test-helper/seed-samples [])
-    (period/run metric-provider)
+    (period/run deployment deployment-namespace metric-provider)
     (is (not (scaled? scale-up)))
     (is (not (scaled? scale-down)))))
 
@@ -47,7 +49,7 @@
 (deftest scale-up-factor-below-minimum-test
   (metric.test-helper/seed-samples [(metric.test-helper/sample (/ metric.test-helper/scale-up-min-sample 2) metric.test-helper/scale-up-min-sample)])
   (testing "should not scale when factor is below scale up min factor"
-    (period/run metric-provider)
+    (period/run deployment deployment-namespace metric-provider)
     (is (not (scaled? scale-up))))
   (testing "should report event"
     (status/notified? scale-up status/below-min-factor)))
@@ -55,7 +57,7 @@
 (deftest scale-down-factor-below-minimum-test
   (metric.test-helper/seed-samples [(metric.test-helper/sample (* metric.test-helper/scale-down-min-sample 2) metric.test-helper/scale-up-min-sample)])
   (testing "should not scale when factor is below scale down min factor"
-    (period/run metric-provider)
+    (period/run deployment deployment-namespace metric-provider)
     (is (not (scaled? scale-down))))
   (testing "should report event"
     (status/notified? scale-down status/below-min-factor)))
@@ -64,7 +66,7 @@
   (testing "should not scale up when current pods = max replicas"
     (with-current-pods (int-env "MAX_REPLICAS")
       (metric.test-helper/seed-samples [120.0])
-      (period/run metric-provider)
+      (period/run deployment deployment-namespace metric-provider)
       (is (not (scaled? scale-up)))))
   (testing "should report event"
     (status/notified? scale-up status/limited)))
@@ -73,7 +75,7 @@
   (testing "should not scale down when current pods = max replicas"
     (with-current-pods (int-env "MIN_REPLICAS")
       (metric.test-helper/seed-samples [96.0])
-      (period/run metric-provider)
+      (period/run deployment deployment-namespace metric-provider)
       (is (not (scaled? scale-up)))))
   (testing "should report event"
     (status/notified? scale-down status/limited)))
@@ -94,7 +96,7 @@
         (time/do-at (time/plus now (time/seconds (* (int-env "CONTROL_LOOP_PERIOD") n)))
           (let [current-pods (:current @deployment-fix)
                 expected-pods-count (calc-expected-pods current-pods (-> samples seq (nth n)))]
-            (period/run metric-provider)
+            (period/run deployment deployment-namespace metric-provider)
             (is (scaled? scale-up))
             (is (= expected-pods-count (:current @deployment-fix)))))))))
 
@@ -106,6 +108,6 @@
         (time/do-at (time/plus now (time/seconds (* (int-env "CONTROL_LOOP_PERIOD") n)))
           (let [current-pods (:current @deployment-fix)
                 expected-pods-count (calc-expected-pods current-pods (-> samples seq (nth n)))]
-            (period/run metric-provider)
+            (period/run deployment deployment-namespace metric-provider)
             (is (scaled? scale-down))
             (is (= expected-pods-count (:current @deployment-fix)))))))))
