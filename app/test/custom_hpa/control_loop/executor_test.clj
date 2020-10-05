@@ -23,6 +23,18 @@
       (is (= min-replicas (:current @deployment-fix)))
       (is (= (:desired deployment-default-spec) (:desired @deployment-fix))))))
 
+(deftest scale-up-to-max-replicas-test
+  (executor/scale 2.0)
+  (testing "should set desired pods to max replicas"
+    (is (= max-replicas (:desired @deployment-fix)))
+    (is (= max-replicas (:current @deployment-fix)))))
+
+(deftest scale-down-to-min-replicas-test
+  (executor/scale 0.1)
+  (testing "should set desired pods to min replicas"
+    (is (= min-replicas (:desired @deployment-fix)))
+    (is (= min-replicas (:current @deployment-fix)))))
+
 (deftest should-scale
   (executor/scale 1.5)
   (are [k] (= (int (* 1.5 (k deployment-default-spec))) (k @deployment-fix))

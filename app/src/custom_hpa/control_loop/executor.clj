@@ -11,12 +11,12 @@
 (def ^:private min-replicas (delay (int-env "MIN_REPLICAS")))
 
 (defn- calculate-desired-pods-count
-  [pods-count factor]
-  (let [pods-count (* pods-count factor)
+  [current-pods-count factor]
+  (let [desired-pods-count (* current-pods-count factor)
         normalized-pods-count (cond
-                                (and (> pods-count pods-count) (> pods-count @max-replicas)) @max-replicas
-                                (and (< pods-count pods-count) (< pods-count @min-replicas)) @min-replicas
-                                :default pods-count)
+                                (and (> desired-pods-count current-pods-count) (> desired-pods-count @max-replicas)) @max-replicas
+                                (and (< desired-pods-count current-pods-count) (< desired-pods-count @min-replicas)) @min-replicas
+                                :default desired-pods-count)
         rounded-pods-count (int (Math/ceil normalized-pods-count))]
     (logger/debug "Calculated new desired number of pods:" rounded-pods-count)
     (prometheus/set (registry :custom-hpa/status-desired-replicas) rounded-pods-count)
@@ -24,8 +24,8 @@
 
 (defn- should-scale? [factor current-pods-count]
   (or
-    (and (scale-up? factor) (not= @max-replicas current-pods-count))
-    (and (scale-down? factor) (not= @min-replicas current-pods-count))))
+    (and (scale-up? factor) (> @max-replicas current-pods-count))
+    (and (scale-down? factor) (< @min-replicas current-pods-count))))
 
 (defn- scale* [factor current-pods-count]
   (let [desired-pods-count (calculate-desired-pods-count current-pods-count factor)]
