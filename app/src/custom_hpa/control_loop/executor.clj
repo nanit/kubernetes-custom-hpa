@@ -9,6 +9,7 @@
 
 (def ^:private max-replicas (delay (int-env "MAX_REPLICAS")))
 (def ^:private min-replicas (delay (int-env "MIN_REPLICAS")))
+(def ^:private dry-run (delay (System/getenv "DRY_RUN")))
 
 (defn- calculate-desired-pods-count
   [current-pods-count factor]
@@ -29,7 +30,7 @@
 
 (defn- scale* [deployment deployment-namespace factor current-pods-count]
   (let [desired-pods-count (calculate-desired-pods-count current-pods-count factor)]
-    (kube/scale-deployment deployment deployment-namespace desired-pods-count)
+    (kube/scale-deployment deployment deployment-namespace desired-pods-count @dry-run)
     (logger/info "Scaled deployment to" desired-pods-count "pods")
     (status/scaled (scale-type factor))))
 

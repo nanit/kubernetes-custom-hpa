@@ -18,7 +18,7 @@
     (with-redefs [kube/current-pods-count (fn [deployment deployment-namespace]
                                             (when (deployment? deployment deployment-namespace)
                                               (:current @deployment-fix)))
-                  kube/scale-deployment (fn [deployment deployment-namespace desired-pods-count]
+                  kube/scale-deployment (fn [deployment deployment-namespace desired-pods-count _dry-run?]
                                           (when (deployment? deployment deployment-namespace)
                                             (swap! deployment-fix assoc :current desired-pods-count :desired desired-pods-count)))]
       (f))))

@@ -29,10 +29,8 @@
 
 (defn scale-deployment
   "Updates the deployment's desired number of pods with `desired-pods-count`."
-  ([deployment deployment-namespace desired-pods-count]
-   (scale-deployment deployment deployment-namespace desired-pods-count false))
-  ([deployment deployment-namespace desired-pods-count dry-run?]
+  [deployment deployment-namespace desired-pods-count dry-run?]
   (let [patch (generate-patch desired-pods-count)
         dry-run (when dry-run? "All")]
     (logger/info "Going to scale deployment to" desired-pods-count "pods")
-    (.patchNamespacedDeployment @api deployment deployment-namespace patch nil dry-run nil nil))))
+    (.patchNamespacedDeployment @api deployment deployment-namespace patch nil dry-run nil nil)))
