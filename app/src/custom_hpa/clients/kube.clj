@@ -31,4 +31,4 @@
   (let [patch (generate-patch desired-pods-count)
         dry-run (when dry-run? "All")]
     (logger/info "Going to scale deployment to" desired-pods-count "pods")
-    (.patchNamespacedDeployment kube-client deployment deployment-namespace patch nil dry-run nil nil)))
+    (.patchNamespacedDeploymentScale kube-client deployment deployment-namespace patch nil dry-run nil nil)))
