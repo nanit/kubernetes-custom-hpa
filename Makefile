@@ -27,7 +27,7 @@ upload:
 
 cleanup:
 	mkdir -p $(CHART_PATH)/pack
-	rm -f $(CHART_PATH)/pack/*
+	#rm -f $(CHART_PATH)/pack/*
 
 release: ci cleanup package upload
 

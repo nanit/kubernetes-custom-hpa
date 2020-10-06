@@ -20,7 +20,6 @@
 (defn kube-fixture [f]
   (binding [deployment-fix (atom deployment-default-spec)]
     (with-redefs [kube/current-pods-count (fn [kube-client deployment deployment-namespace]
-                                            (println kube-client dummy-client)
                                             (when (and (= dummy-client kube-client) (deployment? deployment deployment-namespace))
                                               (:current @deployment-fix)))
                   kube/scale-deployment (fn [kube-client deployment deployment-namespace desired-pods-count _dry-run?]
