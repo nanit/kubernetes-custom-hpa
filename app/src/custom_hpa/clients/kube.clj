@@ -15,7 +15,6 @@
   []
   (logger/debug "Initializing k8s client")
   (let [client (.build (doto (ClientBuilder/cluster)
-                         (ClientBuilder/standard)
                          (.setVerifyingSsl false)))]
     (AppsV1Api. client)))
 
