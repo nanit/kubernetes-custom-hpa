@@ -9,7 +9,7 @@
 
 (def ^:private max-replicas (delay (int-env "MAX_REPLICAS")))
 (def ^:private min-replicas (delay (int-env "MIN_REPLICAS")))
-(def ^:private dry-run (delay (System/getenv "DRY_RUN")))
+(def ^:private dry-run (delay (= "true" (System/getenv "DRY_RUN"))))
 
 (defn- calculate-desired-pods-count
   [current-pods-count factor]
