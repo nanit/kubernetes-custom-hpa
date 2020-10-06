@@ -20,7 +20,7 @@
 
     (and (scale-down? factor) (< factor @scale-down-max-factor))
     (do (logger/info "Scale down factor is too low, using min factor for scale down" @scale-down-max-factor)
-        (status/notify scale-up status/above-max-factor)
+        (status/notify scale-down status/above-max-factor)
         @scale-down-max-factor)
 
     :default factor))

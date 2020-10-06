@@ -5,8 +5,6 @@
            [io.kubernetes.client.openapi.apis AppsV1Api]
            [io.kubernetes.client.custom V1Patch]))
 
-(def ^:private api (atom nil))
-
 (defn- generate-patch
   "Generates a V1Patch object to use for PATCH the deployment"
   [pods-count]
@@ -17,20 +15,21 @@
   []
   (logger/debug "Initializing k8s client")
   (let [client (.build (doto (ClientBuilder/cluster)
+                         (ClientBuilder/standard)
                          (.setVerifyingSsl false)))]
-    (reset! api (AppsV1Api. client))))
+    (AppsV1Api. client)))
 
 (defn current-pods-count
   "Returns current deployment's number of pods"
-  [deployment deployment-namespace]
-  (let [deployment (.readNamespacedDeployment @api deployment deployment-namespace nil nil nil)
+  [kube-client deployment deployment-namespace]
+  (let [deployment (.readNamespacedDeployment kube-client deployment deployment-namespace nil nil nil)
         deployment-status (.getStatus deployment)]
     (.getReplicas deployment-status)))
 
 (defn scale-deployment
   "Updates the deployment's desired number of pods with `desired-pods-count`."
-  [deployment deployment-namespace desired-pods-count dry-run?]
+  [kube-client deployment deployment-namespace desired-pods-count dry-run?]
   (let [patch (generate-patch desired-pods-count)
         dry-run (when dry-run? "All")]
     (logger/info "Going to scale deployment to" desired-pods-count "pods")
-    (.patchNamespacedDeployment @api deployment deployment-namespace patch nil dry-run nil nil)))
+    (.patchNamespacedDeployment kube-client deployment deployment-namespace patch nil dry-run nil nil)))

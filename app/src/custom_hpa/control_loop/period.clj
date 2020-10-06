@@ -6,12 +6,12 @@
             [custom-hpa.control-loop.executor :as executor]
             [custom-hpa.control-loop.status :as status]))
 
-(defn run [deployment deployment-namespace metric-provider]
+(defn run [metric-provider kube-client deployment deployment-namespace]
   (logger/debug "Control loop period started")
   (status/init)
   (when-let [metric-sample (metric/fetch metric-provider)]
     (let [target-factor (factor/calculate metric-sample)]
       (when (reconciler/scale-allowed? target-factor)
-        (executor/scale deployment deployment-namespace target-factor))))
+        (executor/scale kube-client deployment deployment-namespace target-factor))))
   (status/report)
   (logger/debug "Control loop period ended"))

@@ -11,13 +11,13 @@
 
 (defn start [deployment deployment-namespace metric-provider]
   (logger/info "Starting control loop every" @period-ms "milliseconds, deployment =" deployment ", namespace = " deployment-namespace)
-  (kube/init)
-  (go-loop []
-    (try
-      (prometheus/inc (registry :custom-hpa/up))
-      (period/run deployment deployment-namespace metric-provider)
-      (catch Exception e
-        (logger/error e "Exception was thrown during control loop period"))
-      (finally
-        (<! (timeout @period-ms))))
-    (recur)))
+  (let [kube-client (kube/init)]
+    (go-loop []
+      (try
+        (prometheus/inc (registry :custom-hpa/up))
+        (period/run metric-provider kube-client deployment deployment-namespace)
+        (catch Exception e
+          (logger/error e "Exception was thrown during control loop period"))
+        (finally
+          (<! (timeout @period-ms))))
+      (recur))))

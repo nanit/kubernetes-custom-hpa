@@ -8,7 +8,6 @@
 (def cooldown "cooldown")
 (def below-min-factor "below-min-factor")
 (def above-max-factor "above-max-factor")
-(def limited "limited")
 (def scale "scaled")
 
 (def ^:private last-scale-event-timestamp (atom {scale-up   nil
@@ -22,7 +21,7 @@
                                           (event scale-up status)
                                           (event scale-down status)))
                                   #{}
-                                  [cooldown below-min-factor above-max-factor limited scale])))
+                                  [cooldown below-min-factor above-max-factor scale])))
 
 (def ^:private active-events (atom #{}))
 
