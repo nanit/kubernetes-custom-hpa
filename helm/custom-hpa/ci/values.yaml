@@ -10,3 +10,19 @@ prometheus:
   url: http://localhost
   port: 9090
   query: up
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "bar"
+    effect: "NoSchedule"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: foo
+              operator: In
+              values:
+                - bar

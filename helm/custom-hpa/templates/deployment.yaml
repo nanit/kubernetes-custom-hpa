@@ -64,7 +64,7 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
-    {{- if .Values.server.affinity }}
+    {{- if .Values.affinity }}
       affinity:
-{{ toYaml .Values.server.affinity | indent 8 }}
+{{ toYaml .Values.affinity | indent 8 }}
     {{- end }}
