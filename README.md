@@ -19,7 +19,7 @@ Add the Nanit helm charts repo as follows:
 Then you can install the chart by running:
 
     helm install nanit/custom-hpa \ 
-        --version 1.0.0 \
+        --version 1.0.7 \
         --set target.deployment=DEPLOYMENT \
         --set target.namespace=NAMESPACE \
         --set target.value=100 \
