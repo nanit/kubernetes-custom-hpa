@@ -18,8 +18,8 @@
                          (.setVerifyingSsl false)))]
     (AppsV1Api. client)))
 
-(defn current-pods-count
-  "Returns current deployment's number of pods"
+(defn pods-count
+  "Returns deployment's number of desired pods"
   [kube-client deployment deployment-namespace]
   (let [deployment (.readNamespacedDeployment kube-client deployment deployment-namespace nil nil nil)
         deployment-status (.getSpec deployment)]
