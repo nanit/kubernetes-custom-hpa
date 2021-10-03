@@ -37,10 +37,17 @@ lein-test:
 
 helm-test:
 	@echo "Validating helm chart"
-	helm lint $(CHART_PATH) -f $(CHART_PATH)/ci/values.yaml
+	helm lint $(CHART_PATH) --debug -f $(CHART_PATH)/ci/values.yaml
 
 docker:
 	@echo "Building Dockerfile"
 	sudo docker pull $(IMAGE_NAME) || (sudo docker build -t $(IMAGE_NAME) app && sudo docker push $(IMAGE_NAME))
 
 ci: lein-test helm-test docker
+
+helm-dry-run:
+	helm upgrade custom-hpa-dry-run \
+		-f $(CHART_PATH)/ci/values.yaml \
+		--debug \
+		--dry-run \
+		--install $(CHART_PATH)
