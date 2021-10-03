@@ -1,8 +1,7 @@
 {{- $appName := printf "%s-custom-hpa" .Values.target.deployment -}}
 {{- if .Values.appNameSuffix }}
   {{- $appName = print $appName "-" .Values.appNameSuffix }}
-{{- end }}
-
+{{- end}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
