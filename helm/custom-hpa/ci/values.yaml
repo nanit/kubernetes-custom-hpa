@@ -26,3 +26,5 @@ affinity:
               operator: In
               values:
                 - bar
+
+appNameSuffix: bar
