@@ -30,7 +30,7 @@
   "Calculates desired number of pods and updates the deployment's spec replicas.
   The desired number of pods is calculated by multiplying `factor` and the current replicas from the deployment's status."
   [kube-client deployment deployment-namespace factor]
-  (let [current-pods-count (kube/current-pods-count kube-client deployment deployment-namespace)]
-    (logger/debug "Current pods count is" current-pods-count)
-    (prometheus/set (registry :custom-hpa/status-current-replicas) current-pods-count)
-    (scale* kube-client deployment deployment-namespace factor current-pods-count)))
+  (let [pods-count (kube/pods-count kube-client deployment deployment-namespace)]
+    (logger/debug "Current pods count is" pods-count)
+    (prometheus/set (registry :custom-hpa/status-current-replicas) pods-count)
+    (scale* kube-client deployment deployment-namespace factor pods-count)))
